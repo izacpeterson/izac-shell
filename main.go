@@ -42,6 +42,8 @@ func main() {
 			printError(err)
 		}
 
+		input = strings.TrimSpace(input)
+
 		err = execInput(input)
 		if err != nil {
 			printError(err)
