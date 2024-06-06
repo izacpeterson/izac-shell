@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"runtime"
 	"strings"
 )
 
@@ -18,6 +19,9 @@ const (
 )
 
 func main() {
+	clear()
+	motd()
+
 	reader := bufio.NewReader(os.Stdin)
 
 	usr, err := user.Current()
@@ -64,6 +68,19 @@ func execInput(input string) error {
 	case "exit":
 		fmt.Println("Goodbye!")
 		os.Exit(0)
+
+	case "info":
+		fmt.Printf("Build by Izac Peterson\nizacpeterson.com\ngithub.com/izacpeterson\n")
+		return nil
+
+	case "hello":
+		usr, err := user.Current()
+		if err != nil {
+			fmt.Println("User error: ", err)
+		}
+		fmt.Printf("Hello, %v.\n", usr.Username)
+		return nil
+
 	}
 
 	cmd.Stderr = os.Stderr
@@ -74,4 +91,24 @@ func execInput(input string) error {
 
 func printError(err error) {
 	fmt.Println(red+"error: ", err)
+}
+
+func motd() {
+	motdFile := "motd.txt"
+	content, err := os.ReadFile(motdFile)
+	if err != nil {
+		printError(err)
+	}
+	fmt.Println(string(content))
+
+}
+func clear() {
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", "cls")
+	} else {
+		cmd = exec.Command("clear")
+	}
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }
